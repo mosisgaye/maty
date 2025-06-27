@@ -1,0 +1,20 @@
+
+{
+  "name": "ComparePrix",
+  "short_name": "ComparePrix",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#5D3FD3",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

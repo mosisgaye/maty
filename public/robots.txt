@@ -1,0 +1,110 @@
+# 🤖 robots.txt optimisé pour ComparePrix.net
+# Dernière mise à jour: 2024
+
+# Règles pour tous les robots
+User-agent: *
+
+# ✅ Pages autorisées (importantes pour le SEO)
+Allow: /
+Allow: /telephones
+Allow: /mobile
+Allow: /internet
+Allow: /mentions-legales
+Allow: /politique-confidentialite
+Allow: /politique-cookies
+Allow: /cgv
+
+# ✅ Ressources autorisées
+Allow: /favicon.ico
+Allow: /sitemap.xml
+Allow: /site.webmanifest
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.webp$
+
+# ❌ Répertoires interdits
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /assets/
+Disallow: /temp/
+Disallow: /tmp/
+Disallow: /private/
+
+# ❌ Fichiers techniques interdits
+Disallow: /*.json$
+Disallow: /*.xml$ 
+Disallow: /sw.js
+Disallow: /service-worker.js
+Disallow: /*.log$
+Disallow: /*.env$
+Disallow: /*.config$
+
+# ❌ Pages de développement
+Disallow: /dev/
+Disallow: /test/
+Disallow: /debug/
+Disallow: /preview/
+
+# ❌ Paramètres URL à éviter
+Disallow: /*?*utm_*
+Disallow: /*?*ref=*
+Disallow: /*?*source=*
+Disallow: /*?*debug*
+Disallow: /*?*test*
+
+# 🎯 Règles spécifiques pour Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# 🎯 Règles pour Bing
+User-agent: Bingbot  
+Allow: /
+Crawl-delay: 2
+
+# 🎯 Règles pour les autres moteurs
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
+
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 3
+
+# ❌ Bots indésirables
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# 🗺️ SITEMAP (OBLIGATOIRE)
+Sitemap: https://compareprix.net/sitemap.xml
+
+# 📍 Sitemap additionnel (si vous en créez d'autres)
+# Sitemap: https://compareprix.net/sitemap-images.xml
+# Sitemap: https://compareprix.net/sitemap-videos.xml
+
+# 📋 NOTES:
+# - Ce robots.txt optimise l'indexation des pages importantes
+# - Il bloque les ressources techniques inutiles pour le SEO  
+# - Le Crawl-delay évite de surcharger le serveur
+# - Le sitemap est correctement référencé
+# - Les bots indésirables sont bloqués
