@@ -1,7 +1,12 @@
 // hooks/usePhones.tsx
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback, useRef } from 'react'
 import { Phone, SortOption } from '@/types/phones'
 import { filterPhones, sortPhones } from '@/services/phones/phoneService'
+import { memoize } from '@/lib/performance-client'
+
+// Memoization des fonctions de filtrage coûteuses
+const memoizedFilter = memoize(filterPhones)
+const memoizedSort = memoize(sortPhones)
 
 export const usePhones = (initialPhones: Phone[] = []) => {
   // Filter states
@@ -20,12 +25,57 @@ export const usePhones = (initialPhones: Phone[] = []) => {
   const [networkType, setNetworkType] = useState<'all' | '4G' | '5G'>('all')
   const [showOnlyDeals, setShowOnlyDeals] = useState(false)
 
+  // Cache pour éviter les recalculs
+  const filterCacheRef = useRef<{
+    key: string;
+    result: Phone[];
+  } | null>(null)
+
   // Use initial phones
   const allPhones = initialPhones
 
-  // Filter and sort phones
+  // Générer une clé unique pour le cache des filtres
+  const getFilterKey = useCallback(() => {
+    return JSON.stringify({
+      brands: selectedBrands,
+      priceRange,
+      conditions: selectedConditions,
+      os: selectedOS,
+      storage: selectedStorage,
+      ecoFriendly,
+      forfaitType,
+      networkType,
+      showOnlyDeals,
+      sortOption
+    })
+  }, [
+    selectedBrands,
+    priceRange,
+    selectedConditions,
+    selectedOS,
+    selectedStorage,
+    ecoFriendly,
+    forfaitType,
+    networkType,
+    showOnlyDeals,
+    sortOption
+  ])
+
+  // Filter and sort phones avec cache
   const filteredPhones = useMemo(() => {
-    // Créer l'objet filters avec toutes les propriétés nécessaires
+    const currentKey = getFilterKey()
+    
+    // Vérifier le cache
+    if (filterCacheRef.current?.key === currentKey) {
+      return filterCacheRef.current.result
+    }
+
+    // Performance: log uniquement en dev
+    if (process.env.NODE_ENV === 'development') {
+      console.time('Filter phones')
+    }
+    
+    // Créer l'objet filters
     const filters = {
       brands: selectedBrands || [],
       priceRange: { 
@@ -40,10 +90,8 @@ export const usePhones = (initialPhones: Phone[] = []) => {
       network: networkType || 'all',
     }
     
-    // Log pour debug
-    console.log('Applying filters:', filters)
-    
-    let filtered = filterPhones(allPhones, filters)
+    // Appliquer les filtres avec memoization
+    let filtered = memoizedFilter(allPhones, filters)
     
     // Appliquer le filtre des deals
     if (showOnlyDeals) {
@@ -54,34 +102,71 @@ export const usePhones = (initialPhones: Phone[] = []) => {
       )
     }
     
-    return sortPhones(filtered, sortOption)
-  }, [
-    allPhones,
-    selectedBrands,
-    priceRange,
-    selectedConditions,
-    selectedOS,
-    selectedStorage,
-    ecoFriendly,
-    forfaitType,
-    networkType,
-    showOnlyDeals,
-    sortOption
-  ])
+    // Trier avec memoization
+    const sorted = memoizedSort(filtered, sortOption)
+    
+    // Mettre en cache le résultat
+    filterCacheRef.current = {
+      key: currentKey,
+      result: sorted
+    }
 
-  // Toggle comparison
-  const toggleComparison = (phoneId: string) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.timeEnd('Filter phones')
+      console.log(`Filtered: ${sorted.length} phones from ${allPhones.length}`)
+    }
+    
+    return sorted
+  }, [allPhones, getFilterKey, showOnlyDeals, sortOption])
+
+  // Toggle comparison avec limite
+  const toggleComparison = useCallback((phoneId: string) => {
     setComparisonList(prev => {
       if (prev.includes(phoneId)) {
         return prev.filter(id => id !== phoneId)
       } else {
         if (prev.length >= 4) {
+          // Optionnel: afficher un toast pour informer l'utilisateur
+          console.warn('Maximum 4 téléphones en comparaison')
           return [...prev.slice(1), phoneId]
         }
         return [...prev, phoneId]
       }
     })
-  }
+  }, [])
+
+  // Fonction pour réinitialiser les filtres
+  const resetFilters = useCallback(() => {
+    setPriceRange([0, 2000])
+    setSelectedBrands([])
+    setSelectedConditions([])
+    setSelectedOS([])
+    setSelectedStorage([])
+    setEcoFriendly(false)
+    setForfaitType('all')
+    setNetworkType('all')
+    setShowOnlyDeals(false)
+    setSortOption('popularity')
+  }, [])
+
+  // Statistiques pour affichage (memoized)
+  const stats = useMemo(() => ({
+    totalResults: filteredPhones.length,
+    avgPrice: filteredPhones.length > 0 
+      ? Math.round(filteredPhones.reduce((sum, p) => sum + p.price, 0) / filteredPhones.length)
+      : 0,
+    hasActiveFilters: selectedBrands.length > 0 || 
+                     selectedConditions.length > 0 || 
+                     selectedOS.length > 0 || 
+                     selectedStorage.length > 0 || 
+                     ecoFriendly || 
+                     forfaitType !== 'all' || 
+                     networkType !== 'all' || 
+                     showOnlyDeals ||
+                     priceRange[0] > 0 || 
+                     priceRange[1] < 2000
+  }), [filteredPhones, selectedBrands, selectedConditions, selectedOS, selectedStorage, 
+       ecoFriendly, forfaitType, networkType, showOnlyDeals, priceRange])
 
   return {
     // States
@@ -116,6 +201,10 @@ export const usePhones = (initialPhones: Phone[] = []) => {
     isError: false,
     
     // Functions
-    toggleComparison
+    toggleComparison,
+    resetFilters,
+    
+    // Stats
+    stats
   }
 }

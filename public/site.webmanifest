@@ -1,20 +1,27 @@
-
 {
-  "name": "ComparePrix",
+  "name": "ComparePrix - Comparateur télécom",
   "short_name": "ComparePrix",
+  "description": "Comparez tous les forfaits mobiles et box internet",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/favicon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/apple-touch-icon.png",
+      "src": "/favicon-small.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "theme_color": "#5D3FD3",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "categories": ["shopping", "utilities"],
+  "lang": "fr-FR",
+  "dir": "ltr"
 }
