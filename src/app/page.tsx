@@ -1,57 +1,49 @@
-// src/app/page.tsx - Page d'accueil SaaS
+// src/app/page.tsx - Page d'accueil du comparateur télécom
 import type { Metadata } from 'next';
-import SaaSHomePage from './SaaSHomePage';
+import HomePage from './HomePage';
 
 export const metadata: Metadata = {
-  title: 'AISupport Pro - Plateforme SaaS de Support Client IA',
-  description: 'Révolutionnez votre support client avec notre IA avancée. Chat intelligent, automatisation, insights en temps réel. Essai gratuit 14 jours.',
+  title: 'ComparePrix - Comparateur de forfaits mobiles et box internet',
+  description: 'Comparez tous les forfaits mobiles et box internet. Économisez jusqu\'à 40% avec notre comparateur 100% indépendant et gratuit.',
   keywords: [
-    'support client IA',
-    'chatbot intelligent',
-    'SaaS support',
-    'automatisation client',
-    'IA conversationnelle',
-    'plateforme support',
-    'chat GPT-4',
-    'Claude AI',
-    'service client automatisé'
+    'comparateur forfait mobile',
+    'comparateur box internet',
+    'forfait mobile pas cher',
+    'box internet fibre',
+    'comparateur télécom',
+    'meilleur forfait mobile',
+    'meilleure box internet',
+    'compareprix'
   ],
   openGraph: {
-    title: 'AISupport Pro - Support Client IA Révolutionnaire',
-    description: 'Transformez votre support client avec l\'IA. Chat intelligent, automatisation avancée, insights en temps réel.',
-    url: 'https://aisupport-pro.com',
+    title: 'ComparePrix - Comparateur de forfaits mobiles et box internet',
+    description: 'Comparez tous les forfaits mobiles et box internet. Économisez jusqu\'à 40% avec notre comparateur.',
+    url: 'https://compareprix.net',
     images: [
       {
-        url: '/og-saas-homepage.jpg',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'AISupport Pro - Plateforme SaaS IA',
+        alt: 'ComparePrix - Comparateur de forfaits',
       },
     ],
   },
   alternates: {
-    canonical: 'https://aisupport-pro.com',
+    canonical: 'https://compareprix.net',
   },
 };
 
 export default function Page() {
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'AISupport Pro',
-    description: 'Plateforme SaaS de support client basée sur l\'IA',
-    applicationCategory: 'BusinessApplication',
-    operatingSystem: 'Web',
-    offers: {
-      '@type': 'Offer',
-      price: '29',
-      priceCurrency: 'EUR',
-      priceValidUntil: '2024-12-31'
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: '1247'
+    '@type': 'WebSite',
+    name: 'ComparePrix',
+    description: 'Comparateur de forfaits mobiles et box internet',
+    url: 'https://compareprix.net',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://compareprix.net/forfaits-mobiles?q={search_term_string}',
+      'query-input': 'required name=search_term_string'
     }
   };
 
@@ -61,7 +53,7 @@ export default function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <SaaSHomePage />
+      <HomePage />
     </>
   );
 }
