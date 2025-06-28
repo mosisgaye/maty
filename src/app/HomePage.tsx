@@ -1,33 +1,38 @@
 // src/app/HomePage.tsx
 'use client';
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Banner from '@/components/layout/Banner';
 
 // Import direct pour les sections importantes SEO
 import BoxSectionHomepage from '@/components/sections/BoxSectionHomepage';
-import BlogSection from '@/components/home/BlogSection';
 
 // Lazy loading avec webpackPrefetch pour les sections visibles rapidement
-const MobileSection = lazy(() => 
-  import(/* webpackPrefetch: true */ '@/components/home/MobileSection')
+const MobileSection = dynamic(() => 
+  import(/* webpackPrefetch: true */ '@/components/home/MobileSection'),
+  { ssr: false }
 );
 
-const InternetSection = lazy(() => 
-  import(/* webpackPrefetch: true */ '@/components/home/InternetSection')
+const InternetSection = dynamic(() => 
+  import(/* webpackPrefetch: true */ '@/components/home/InternetSection'),
+  { ssr: false }
 );
 
 // Lazy loading standard pour les sections plus bas
-const ComparisonSection = lazy(() => 
-  import('@/components/home/ComparisonSection')
+const ComparisonSection = dynamic(() => 
+  import('@/components/home/ComparisonSection'),
+  { ssr: false }
 );
 
-const PartnersSection = lazy(() => 
-  import('@/components/home/PartnersSection')
+const PartnersSection = dynamic(() => 
+  import('@/components/home/PartnersSection'),
+  { ssr: false }
 );
 
-const TestimonialsSection = lazy(() => 
-  import('@/components/home/TestimonialsSection')
+const TestimonialsSection = dynamic(() => 
+  import('@/components/home/TestimonialsSection'),
+  { ssr: false }
 );
 
 // Skeleton optimisé
@@ -81,7 +86,11 @@ const LazySection = ({ children, fallback }: { children: React.ReactNode; fallba
   );
 };
 
-const HomePage = () => {
+interface HomePageProps {
+  children?: React.ReactNode;
+}
+
+const HomePage = ({ children }: HomePageProps) => {
   return (
     <main className="flex-1">
       {/* Hero Section - Pas de lazy loading car critique */}
@@ -90,19 +99,15 @@ const HomePage = () => {
       </section>
         
       {/* Section Box Internet - Pas de lazy loading car importante pour le SEO */}
-     
-        <BoxSectionHomepage />
-      
+      <BoxSectionHomepage />
 
       {/* Sections avec lazy loading intelligent */}
       <LazySection>
         <MobileSection />
       </LazySection>
 
-  
-
-      {/* Section Blog - Pas de lazy loading car importante pour le SEO et l'engagement */}
-      <BlogSection />
+      {/* Section Blog - Rendu côté serveur via children */}
+      {children}
       
       <LazySection fallback={<SectionSkeleton height="256px" />}>
         <ComparisonSection />

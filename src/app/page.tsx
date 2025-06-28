@@ -1,6 +1,7 @@
 // src/app/page.tsx - Page d'accueil du comparateur télécom
 import type { Metadata } from 'next';
 import HomePage from './HomePage';
+import BlogSection from '@/components/home/BlogSection';
 
 export const metadata: Metadata = {
   title: 'ComparePrix - Comparateur de forfaits mobiles et box internet',
@@ -53,7 +54,9 @@ export default function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <HomePage />
+      <HomePage>
+        <BlogSection />
+      </HomePage>
     </>
   );
 }

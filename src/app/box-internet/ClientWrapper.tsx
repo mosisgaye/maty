@@ -13,11 +13,13 @@ import { useBoxesWithFilters, useBoxComparison } from '@/hooks/useBoxes';
 
 // Lazy loading des composants lourds
 const FilterPanel = dynamic(() => import('@/components/box/FilterPanel'), {
-  loading: () => <div className="w-80 h-96 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />
+  loading: () => <div className="w-80 h-96 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />,
+  ssr: false
 });
 
 const ResultsPanel = dynamic(() => import('@/components/box/ResultsPanel'), {
-  loading: () => <div className="flex-1 h-96 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />
+  loading: () => <div className="flex-1 h-96 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />,
+  ssr: false
 });
 
 const MobileFilterDrawer = dynamic(() => import('@/components/box/MobileFilterDrawer'), {

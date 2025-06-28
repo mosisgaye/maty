@@ -12,11 +12,13 @@ import { Badge } from '@/components/ui/badge';
 
 // Lazy loading des composants (identique à votre page.tsx actuelle)
 const FilterPanel = dynamic(() => import('@/components/mobile/FilterPanel'), {
-  loading: () => <div className="w-80 h-96 bg-gray-100 dark:bg-gray-800 rounded-lg" />
+  loading: () => <div className="w-80 h-96 bg-gray-100 dark:bg-gray-800 rounded-lg" />,
+  ssr: false
 });
 
 const ResultsPanel = dynamic(() => import('@/components/mobile/ResultsPanel'), {
-  loading: () => <div className="flex-1 h-96 bg-gray-100 dark:bg-gray-800 rounded-lg" />
+  loading: () => <div className="flex-1 h-96 bg-gray-100 dark:bg-gray-800 rounded-lg" />,
+  ssr: false
 });
 
 const MobileFilterDrawer = dynamic(() => import('@/components/mobile/MobileFilterDrawer'), {
