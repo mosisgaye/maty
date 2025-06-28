@@ -9,7 +9,6 @@ import { Filter, Sparkles, TrendingUp, Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import Banner from '@/components/layout/Banner';
 
 // Lazy loading des composants (identique à votre page.tsx actuelle)
 const FilterPanel = dynamic(() => import('@/components/mobile/FilterPanel'), {
@@ -32,6 +31,7 @@ const ComparisonModal = dynamic(() => import('@/components/mobile/ComparisonModa
 
 interface ClientWrapperProps {
   initialPlans: UnifiedMobilePlan[];
+  presetDataFilter?: string;
 }
 
 export default function ClientWrapper({ initialPlans }: ClientWrapperProps) {
@@ -243,7 +243,7 @@ export default function ClientWrapper({ initialPlans }: ClientWrapperProps) {
   return (
     <>
       {/* Banner - maintenant dans le Client Component */}
-      <Banner />
+     
       
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header avec actions */}
