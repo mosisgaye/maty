@@ -4,18 +4,29 @@ import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import Providers from '@/providers';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import { SEO_CONFIG } from '@/lib/seo/config';
 import { JsonLd, organizationSchema, websiteSchema } from '@/components/seo/JsonLd';
+import dynamic from 'next/dynamic';
 
-// Optimisation de la font avec preload et swap
+// Lazy load des composants non critiques
+const Header = dynamic(() => import('@/components/layout/Header'), {
+  ssr: true // Header important pour le SEO
+});
+
+const Footer = dynamic(() => import('@/components/layout/Footer'), {
+  ssr: false,
+  loading: () => <div className="h-64" />
+});
+
+// Optimisation de la font avec subset minimal et poids spécifiques
 const inter = Inter({ 
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
   preload: true,
-  adjustFontFallback: true // Réduit le CLS
+  adjustFontFallback: true,
+  weight: ['400', '500', '600', '700'], // Seulement les poids utilisés
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif']
 });
 
 // Métadonnées SEO complètes
@@ -89,7 +100,6 @@ export const metadata: Metadata = {
   verification: {
     google: SEO_CONFIG.verification.google,
     yandex: SEO_CONFIG.verification.yandex,
-   
   },
   category: 'technology',
 };
@@ -119,39 +129,32 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
-        {/* CSS critique inline pour éviter le blocage */}
+        {/* CSS critique inline pour éviter le blocage - OPTIMISÉ */}
         <style dangerouslySetInnerHTML={{
           __html: `
-            /* CSS critique pour éviter le flash */
-            body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-            .dark { background: #0f172a; color: #fff; }
-            * { box-sizing: border-box; }
+            /* CSS critique minimal */
+            *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+            .dark{background:#0f172a;color:#fff}
+            /* Préchargement des classes critiques */
+            .container{width:100%;max-width:1280px;margin:0 auto;padding:0 1rem}
+            @media(min-width:768px){.container{padding:0 2rem}}
           `
         }} />
         
-        {/* Préconnexions DNS pour accélérer les requêtes */}
+        {/* Préconnexions DNS optimisées - seulement les critiques */}
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {GA_ID && (
-          <>
-            <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-            <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-          </>
-        )}
         
-        {/* Favicon et icônes */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon.png" type="image/png" />
+        {/* Favicon optimisé avec fallback base64 */}
+        <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        
-
         
         {/* Script de thème optimisé - AVANT tout le reste */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var d=document.documentElement,c=d.classList;var t=localStorage.getItem('theme')||'system';if(t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){c.add('dark')}else{c.remove('dark')}}catch(e){}})();`,
+            __html: `!function(){try{var d=document.documentElement,t=localStorage.getItem('theme')||'system';'dark'===t||'system'===t&&matchMedia('(prefers-color-scheme:dark)').matches?d.classList.add('dark'):d.classList.remove('dark')}catch(e){}}();`,
           }}
         />
         
@@ -166,7 +169,6 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="ComparePrix" />
         <meta name="application-name" content="ComparePrix" />
         <meta name="msapplication-TileColor" content="#2563eb" />
-        <meta name="msapplication-config" content="/browserconfig.xml" />
         
         {/* Open Graph supplémentaires */}
         <meta property="og:locale:alternate" content="fr_FR" />
@@ -174,7 +176,7 @@ export default function RootLayout({
           <meta property="fb:app_id" content={SEO_CONFIG.social.facebookAppId} />
         )}
         
-        {/* Balises pour les articles (si applicable) */}
+        {/* Balises pour les articles */}
         <meta property="article:author" content="ComparePrix" />
         <meta property="article:publisher" content={SEO_CONFIG.social.facebook} />
       </head>
@@ -188,6 +190,7 @@ export default function RootLayout({
               height="0" 
               width="0" 
               style={{ display: 'none', visibility: 'hidden' }}
+              title="Google Tag Manager"
             />
           </noscript>
         )}
@@ -202,29 +205,37 @@ export default function RootLayout({
           </div>
         </Providers>
         
-        {/* Google Analytics 4 - seulement si GA_ID existe */}
+        {/* Google Analytics 4 - DIFFÉRÉ avec lazyOnload */}
         {GA_ID && (
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-              strategy="afterInteractive"
+              strategy="lazyOnload"
             />
-            <Script id="google-analytics" strategy="afterInteractive">
+            <Script id="google-analytics" strategy="lazyOnload">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', '${GA_ID}', {
                   page_path: window.location.pathname,
+                  send_page_view: false
+                });
+                // Envoyer la page vue après le chargement complet
+                window.addEventListener('load', () => {
+                  gtag('event', 'page_view', {
+                    page_path: window.location.pathname,
+                    page_title: document.title
+                  });
                 });
               `}
             </Script>
           </>
         )}
         
-        {/* Facebook Pixel - seulement si FB_PIXEL_ID existe */}
+        {/* Facebook Pixel - DIFFÉRÉ avec lazyOnload */}
         {FB_PIXEL_ID && (
-          <Script id="facebook-pixel" strategy="afterInteractive">
+          <Script id="facebook-pixel" strategy="lazyOnload">
             {`
               !function(f,b,e,v,n,t,s)
               {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -234,68 +245,50 @@ export default function RootLayout({
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '${FB_PIXEL_ID}');
-              fbq('track', 'PageView');
-            `}
-          </Script>
-        )}
-        
-        {/* Script de monitoring des Core Web Vitals */}
-        {GA_ID && (
-          <Script id="web-vitals" strategy="afterInteractive">
-            {`
-              // Fonction pour envoyer les Core Web Vitals à Google Analytics
-              function sendToGoogleAnalytics({name, delta, value, id}) {
-                if (typeof gtag !== 'undefined') {
-                  gtag('event', name, {
-                    event_category: 'Web Vitals',
-                    event_label: id,
-                    value: Math.round(name === 'CLS' ? delta * 1000 : delta),
-                    non_interaction: true,
-                  });
-                }
-              }
               
-              // Charger web-vitals seulement si nécessaire
-              if ('PerformanceObserver' in window) {
-                import('https://unpkg.com/web-vitals@3/dist/web-vitals.iife.js').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
-                  onCLS(sendToGoogleAnalytics);
-                  onFID(sendToGoogleAnalytics);
-                  onFCP(sendToGoogleAnalytics);
-                  onLCP(sendToGoogleAnalytics);
-                  onTTFB(sendToGoogleAnalytics);
-                });
-              }
+              // Initialiser après le chargement
+              window.addEventListener('load', () => {
+                fbq('init', '${FB_PIXEL_ID}');
+                fbq('track', 'PageView');
+              });
             `}
           </Script>
         )}
         
-        {/* Script de détection AdBlock (optionnel) */}
-        <Script id="adblock-detect" strategy="lazyOnload">
-          {`
-            (function() {
-              var adBlockEnabled = false;
-              var testAd = document.createElement('div');
-              testAd.innerHTML = '&nbsp;';
-              testAd.className = 'adsbox';
-              testAd.style.position = 'absolute';
-              testAd.style.left = '-999px';
-              document.body.appendChild(testAd);
-              window.setTimeout(function() {
-                if (testAd.offsetHeight === 0) {
-                  adBlockEnabled = true;
+        {/* Script de monitoring des Core Web Vitals - SIMPLIFIÉ */}
+        {GA_ID && (
+          <Script id="web-vitals" strategy="lazyOnload">
+            {`
+              // Web Vitals léger et optimisé
+              if ('PerformanceObserver' in window && GA_ID) {
+                try {
+                  // Observer pour LCP
+                  new PerformanceObserver((list) => {
+                    const entries = list.getEntries();
+                    const lastEntry = entries[entries.length - 1];
+                    gtag && gtag('event', 'LCP', {
+                      event_category: 'Web Vitals',
+                      value: Math.round(lastEntry.startTime),
+                      non_interaction: true
+                    });
+                  }).observe({ type: 'largest-contentful-paint', buffered: true });
+                  
+                  // Observer pour FID
+                  new PerformanceObserver((list) => {
+                    const firstInput = list.getEntries()[0];
+                    gtag && gtag('event', 'FID', {
+                      event_category: 'Web Vitals',
+                      value: Math.round(firstInput.processingStart - firstInput.startTime),
+                      non_interaction: true
+                    });
+                  }).observe({ type: 'first-input', buffered: true });
+                } catch (e) {
+                  // Silently fail
                 }
-                testAd.remove();
-                if (window.gtag && adBlockEnabled) {
-                  gtag('event', 'adblock_enabled', {
-                    event_category: 'engagement',
-                    non_interaction: true,
-                  });
-                }
-              }, 100);
-            })();
-          `}
-        </Script>
+              }
+            `}
+          </Script>
+        )}
       </body>
     </html>
   );

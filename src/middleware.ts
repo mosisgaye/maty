@@ -1,7 +1,7 @@
 // ================================================
 // FICHIER: /src/middleware.ts
 // ================================================
-// Ajoutez l'exclusion des fichiers statiques
+// Middleware avec protection contre HTTPS en local
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
@@ -31,12 +31,15 @@ export function middleware(request: NextRequest) {
     );
   }
   
-  // Forcer HTTPS en production
-  if (process.env.NODE_ENV === 'production') {
+  // Forcer HTTPS en production SEULEMENT (pas en local)
+  const host = request.headers.get('host') || '';
+  const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1') || host.includes('0.0.0.0');
+  
+  if (process.env.NODE_ENV === 'production' && !isLocalhost) {
     const proto = request.headers.get('x-forwarded-proto');
     if (proto === 'http') {
       return NextResponse.redirect(
-        `https://${request.headers.get('host')}${request.nextUrl.pathname}`,
+        `https://${host}${request.nextUrl.pathname}${request.nextUrl.search}`,
         { status: 301 }
       );
     }

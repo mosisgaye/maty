@@ -4,6 +4,9 @@
 import React, { Suspense, lazy } from 'react';
 import Banner from '@/components/layout/Banner';
 
+// Import direct pour BoxSectionHomepage (important pour le SEO)
+import BoxSectionHomepage from '@/components/sections/BoxSectionHomepage';
+
 // Lazy loading avec webpackPrefetch pour les sections visibles rapidement
 const MobileSection = lazy(() => 
   import(/* webpackPrefetch: true */ '@/components/home/MobileSection')
@@ -85,6 +88,9 @@ const HomePage = () => {
         <Banner />
       </section>
         
+      {/* Section Box Internet - Pas de lazy loading car importante pour le SEO */}
+      <BoxSectionHomepage />
+
       {/* Sections avec lazy loading intelligent */}
       <LazySection>
         <MobileSection />

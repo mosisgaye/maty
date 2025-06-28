@@ -81,7 +81,7 @@ const BannerIllustration: React.FC = () => {
             
             return (
               <motion.div 
-                key={`${offer.id}-${cardIndex}`}
+                key={`banner-card-${offer.promoid || offer.id}-${stackIndex}-${visibleCards.join('-')}`}
                 className="absolute top-0 left-0 bg-card/95 dark:bg-card border border-border shadow-lg rounded-xl p-3 backdrop-blur-sm w-64 h-28 md:h-32"
                 style={{
                   zIndex: zIndex,

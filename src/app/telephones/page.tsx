@@ -5,6 +5,8 @@ import { loadPhonesFromServer } from '@/lib/phone-data'
 import ClientWrapper from './ClientWrapper'
 import PhoneStructuredData from '@/components/phones/PhoneStructuredData'
 import { generatePaginationMetadata, generatePaginationSchema } from '@/lib/seo/generatePaginationMetadata'
+export const dynamic = 'force-dynamic';
+
 
 const PHONES_PER_PAGE = 30;
 
