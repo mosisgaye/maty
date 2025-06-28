@@ -6,7 +6,6 @@ const nextConfig = {
   
   // 🔧 Experimental features pour de meilleures performances
   experimental: {
-    optimizeCss: true,
     scrollRestoration: true,
     webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB'],
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
@@ -20,6 +19,15 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 365, // 1 an
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Configuration pour autoriser les images de l'API Strapi
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'api.compareprix.net',
+        port: '',
+        pathname: '/uploads/**',
+      },
+    ],
   },
 
   // 🔄 Redirections pour préserver le SEO
@@ -84,7 +92,7 @@ const nextConfig = {
   },
 
   // 📦 Optimisation des bundles
-  webpack: (config: any, { dev, isServer }: { dev: boolean; isServer: boolean }) => {
+  webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
@@ -112,7 +120,6 @@ const nextConfig = {
     return config;
   },
 
-
   // 🌍 i18n pour le SEO local (si nécessaire)
   i18n: {
     locales: ['fr'],
@@ -134,4 +141,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

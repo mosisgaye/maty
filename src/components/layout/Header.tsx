@@ -8,17 +8,40 @@ import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
 
+interface BadgeConfig {
+  text: string;
+  className: string;
+}
+
 interface NavItem {
   label: string;
   href: string;
   icon: React.ReactElement;
+  badge?: BadgeConfig;
 }
 
+// Fonction helper pour vérifier si on doit afficher le badge NEW
+const shouldShowNewBadge = (): boolean => {
+  const blogLaunchDate = new Date('2025-06-28'); // Date de lancement du blog
+  const currentDate = new Date();
+  const daysDifference = Math.floor((currentDate.getTime() - blogLaunchDate.getTime()) / (1000 * 60 * 60 * 24));
+  return daysDifference <= 30;
+};
+
 const navItems: NavItem[] = [
-  { label: 'Forfait Mobile', href: '/forfaits-mobiles', icon: <Smartphone className="w-4 h-4 mr-2" /> },
-  { label: 'Box Internet', href: '/internet', icon: <Wifi className="w-4 h-4 mr-2" /> },
-  { label: 'Téléphones', href: '/telephones', icon: <Phone className="w-4 h-4 mr-2" /> },
-  { label: 'Box + Mobile', href: '/packages', icon: <Package className="w-4 h-4 mr-2" /> },
+  { label: 'Forfait Mobile', href: '/forfaits-mobiles', icon: <Smartphone className="w-4 h-4" /> },
+  { label: 'Box Internet', href: '/box-internet', icon: <Wifi className="w-4 h-4" /> },
+  { label: 'Téléphones', href: '/telephones', icon: <Phone className="w-4 h-4" /> },
+  { label: 'Box + Mobile', href: '/packages', icon: <Package className="w-4 h-4" /> },
+  { 
+    label: 'Blog',
+    href: '/blog', 
+    icon: <FileText className="w-4 h-4" />,
+    badge: shouldShowNewBadge() ? {
+      text: 'NEW',
+      className: 'ml-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-0.5 rounded-full font-medium animate-pulse'
+    } : undefined
+  },
 ];
 
 const Header = () => {
@@ -92,7 +115,7 @@ const Header = () => {
                 key={index}
                 href={item.href}
                 className={cn(
-                  "px-4 py-2 rounded-lg transition-all duration-200 flex items-center text-sm font-medium",
+                  "px-4 py-2 rounded-lg transition-all duration-200 flex items-center text-sm font-medium relative",
                   isActive
                     ? "bg-primary/10 dark:bg-primary/20 text-primary"
                     : "text-foreground hover:bg-muted"
@@ -105,6 +128,11 @@ const Header = () => {
                   )
                 })}
                 <span>{item.label}</span>
+                {item.badge && (
+                  <span className={item.badge.className}>
+                    {item.badge.text}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -154,7 +182,7 @@ const Header = () => {
                 key={index}
                 href={item.href}
                 className={cn(
-                  "py-3 px-4 rounded-lg flex items-center text-foreground transition-colors",
+                  "py-3 px-4 rounded-lg flex items-center text-foreground transition-colors relative",
                   isActive
                     ? "bg-primary/10 dark:bg-primary/20 text-primary"
                     : "hover:bg-muted/50"
@@ -162,13 +190,20 @@ const Header = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 role="menuitem"
               >
-                {React.cloneElement(item.icon, { 
-                  className: cn(
-                    "w-5 h-5 mr-3",
-                    isActive ? "text-primary" : ""
-                  )
-                })}
-                <span className="text-base">{item.label}</span>
+                <div className="flex items-center flex-1">
+                  {React.cloneElement(item.icon, { 
+                    className: cn(
+                      "w-5 h-5 mr-3",
+                      isActive ? "text-primary" : ""
+                    )
+                  })}
+                  <span className="text-base">{item.label}</span>
+                </div>
+                {item.badge && (
+                  <span className={item.badge.className}>
+                    {item.badge.text}
+                  </span>
+                )}
               </Link>
             );
           })}

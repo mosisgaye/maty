@@ -4,8 +4,9 @@
 import React, { Suspense, lazy } from 'react';
 import Banner from '@/components/layout/Banner';
 
-// Import direct pour BoxSectionHomepage (important pour le SEO)
+// Import direct pour les sections importantes SEO
 import BoxSectionHomepage from '@/components/sections/BoxSectionHomepage';
+import BlogSection from '@/components/home/BlogSection';
 
 // Lazy loading avec webpackPrefetch pour les sections visibles rapidement
 const MobileSection = lazy(() => 
@@ -29,11 +30,11 @@ const TestimonialsSection = lazy(() =>
   import('@/components/home/TestimonialsSection')
 );
 
-// Skeleton optimisé (pas de classes inutiles)
+// Skeleton optimisé
 const SectionSkeleton = ({ height = "384px" }: { height?: string }) => (
   <div 
-    style={{ height, backgroundColor: 'hsl(var(--muted))', opacity: 0.5 }}
-    className="animate-pulse rounded-lg m-4" 
+    style={{ height }}
+    className="bg-gray-100 dark:bg-gray-800 animate-pulse rounded-lg mx-4 my-8" 
   />
 );
 
@@ -84,21 +85,24 @@ const HomePage = () => {
   return (
     <main className="flex-1">
       {/* Hero Section - Pas de lazy loading car critique */}
-      <section className="relative overflow-hidden bg-primary/5 dark:bg-primary/10">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <Banner />
       </section>
         
       {/* Section Box Internet - Pas de lazy loading car importante pour le SEO */}
-      <BoxSectionHomepage />
+     
+        <BoxSectionHomepage />
+      
 
       {/* Sections avec lazy loading intelligent */}
       <LazySection>
         <MobileSection />
       </LazySection>
 
-      <LazySection>
-        <InternetSection />
-      </LazySection>
+  
+
+      {/* Section Blog - Pas de lazy loading car importante pour le SEO et l'engagement */}
+      <BlogSection />
       
       <LazySection fallback={<SectionSkeleton height="256px" />}>
         <ComparisonSection />
@@ -112,21 +116,33 @@ const HomePage = () => {
         <TestimonialsSection />
       </LazySection>
       
-      {/* Trust badges inline pour éviter un composant supplémentaire */}
-      <section className="py-8 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center items-center gap-8">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">10 000+</p>
-              <p className="text-sm text-muted-foreground">Utilisateurs satisfaits</p>
+      {/* Trust badges avec dark mode support */}
+      <section className="py-12 bg-gray-100 dark:bg-gray-800 transition-colors duration-300">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="space-y-2">
+              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                10 000+
+              </p>
+              <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
+                Utilisateurs satisfaits
+              </p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">98%</p>
-              <p className="text-sm text-muted-foreground">Taux de satisfaction</p>
+            <div className="space-y-2">
+              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                98%
+              </p>
+              <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
+                Taux de satisfaction
+              </p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">24/7</p>
-              <p className="text-sm text-muted-foreground">Support disponible</p>
+            <div className="space-y-2">
+              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                24/7
+              </p>
+              <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
+                Support disponible
+              </p>
             </div>
           </div>
         </div>

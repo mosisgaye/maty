@@ -1,3 +1,4 @@
+/* globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -90,4 +91,306 @@ html {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--muted));
   }
+}
+
+/* ========== CORRECTIONS POUR LE BLOG ========== */
+
+/* Fix pour le header spacing sur toutes les pages */
+@layer base {
+  body {
+    padding-top: 64px; /* Hauteur du header fixe */
+  }
+
+  /* Header fixe */
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    height: 64px;
+  }
+}
+
+/* Largeur du contenu pour les articles */
+@layer components {
+  /* Container pour articles - LARGEUR CORRIGÉE */
+  .prose {
+    max-width: none !important;
+  }
+
+  .prose-lg {
+    font-size: 1.125rem !important;
+    line-height: 1.75 !important;
+  }
+
+  /* Espacements markdown */
+  .prose h1 {
+    @apply text-3xl md:text-4xl font-bold mt-8 mb-4;
+  }
+
+  .prose h2 {
+    @apply text-2xl md:text-3xl font-bold mt-8 mb-4;
+  }
+
+  .prose h3 {
+    @apply text-xl md:text-2xl font-semibold mt-6 mb-3;
+  }
+
+  .prose p {
+    @apply text-lg leading-relaxed mb-6;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply my-6 space-y-2 pl-6;
+  }
+
+  .prose li {
+    @apply text-lg leading-relaxed;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-blue-600 bg-blue-50 dark:bg-blue-950/20;
+    @apply py-4 px-6 my-8 italic;
+  }
+
+  .prose a {
+    @apply text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300;
+    @apply underline underline-offset-2;
+  }
+
+  .prose strong {
+    @apply font-bold;
+  }
+
+  .prose code {
+    @apply bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm;
+  }
+
+  .prose pre {
+    @apply bg-gray-900 dark:bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto my-6;
+  }
+}
+
+/* Boutons de catégories visibles */
+@layer components {
+  .category-button {
+    @apply px-5 py-2.5 rounded-lg font-medium transition-all duration-200;
+  }
+
+  .category-button-active {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white;
+    @apply shadow-lg hover:shadow-xl transform hover:scale-105;
+  }
+
+  .category-button-inactive {
+    @apply bg-gray-100 dark:bg-gray-800;
+    @apply text-gray-700 dark:text-gray-300;
+    @apply border-2 border-gray-300 dark:border-gray-600;
+    @apply hover:bg-gray-200 dark:hover:bg-gray-700;
+    @apply hover:border-gray-400 dark:hover:border-gray-500;
+  }
+}
+
+/* Cards et composants */
+@layer components {
+  .blog-card {
+    @apply bg-white dark:bg-gray-800;
+    @apply border border-gray-200 dark:border-gray-700;
+    @apply transition-all duration-300;
+  }
+
+  .blog-card:hover {
+    @apply shadow-xl;
+  }
+}
+
+/* Animations */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Conteneurs responsive */
+@layer components {
+  .container-article {
+    @apply max-w-7xl mx-auto px-4;
+  }
+
+  .content-width {
+    @apply max-w-4xl mx-auto;
+  }
+}
+
+/* Dark mode transitions sans flash */
+.theme-transition-none * {
+  transition: none !important;
+}
+
+/* Print styles */
+@media print {
+  body {
+    @apply bg-white text-black;
+    padding-top: 0;
+  }
+  
+  header,
+  aside,
+  .no-print {
+    display: none !important;
+  }
+}
+
+
+
+/* Ajouts à ajouter à la fin de votre globals.css pour supporter le contenu HTML */
+
+/* ========== STYLES POUR LE CONTENU HTML DES ARTICLES ========== */
+
+/* Container principal pour le contenu HTML */
+.article-content {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: #374151;
+}
+
+.dark .article-content {
+  color: #e5e7eb;
+}
+
+/* Titres */
+.article-content h1 {
+  @apply text-3xl md:text-4xl font-bold mt-8 mb-4 text-gray-900 dark:text-gray-100;
+}
+
+.article-content h2 {
+  @apply text-2xl md:text-3xl font-bold mt-8 mb-4 text-gray-900 dark:text-gray-100;
+}
+
+.article-content h3 {
+  @apply text-xl md:text-2xl font-semibold mt-6 mb-3 text-gray-900 dark:text-gray-100;
+}
+
+.article-content h4 {
+  @apply text-lg md:text-xl font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100;
+}
+
+/* Paragraphes */
+.article-content p {
+  @apply mb-6 text-gray-700 dark:text-gray-300;
+}
+
+/* Listes */
+.article-content ul {
+  @apply list-disc list-inside my-6 space-y-2 pl-4 text-gray-700 dark:text-gray-300;
+}
+
+.article-content ol {
+  @apply list-decimal list-inside my-6 space-y-2 pl-4 text-gray-700 dark:text-gray-300;
+}
+
+.article-content li {
+  @apply mb-2;
+}
+
+/* Liens */
+.article-content a {
+  @apply text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-2 transition-colors;
+}
+
+/* Strong et emphasis */
+.article-content strong {
+  @apply font-bold text-gray-900 dark:text-gray-100;
+}
+
+.article-content em {
+  @apply italic;
+}
+
+/* Blockquotes */
+.article-content blockquote {
+  @apply border-l-4 border-blue-600 bg-blue-50 dark:bg-blue-950/20 py-4 px-6 my-8 italic text-gray-700 dark:text-gray-300;
+}
+
+/* Code */
+.article-content code {
+  @apply bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono;
+}
+
+.article-content pre {
+  @apply bg-gray-900 dark:bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto my-6;
+}
+
+.article-content pre code {
+  @apply bg-transparent p-0;
+}
+
+/* Tables */
+.article-content table {
+  @apply w-full my-8 border-collapse;
+}
+
+.article-content th {
+  @apply bg-gray-100 dark:bg-gray-800 font-semibold text-left p-3 border border-gray-300 dark:border-gray-600;
+}
+
+.article-content td {
+  @apply p-3 border border-gray-300 dark:border-gray-600;
+}
+
+.article-content tbody tr:nth-child(even) {
+  @apply bg-gray-50 dark:bg-gray-800/50;
+}
+
+/* Images */
+.article-content img {
+  @apply rounded-lg shadow-lg my-8 mx-auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* HR */
+.article-content hr {
+  @apply my-8 border-gray-300 dark:border-gray-700;
+}
+
+/* Espacement entre éléments adjacents */
+.article-content > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Fix pour les éléments imbriqués */
+.article-content li > p {
+  @apply mb-2;
+}
+
+.article-content li > ul,
+.article-content li > ol {
+  @apply mt-2 mb-2;
 }
